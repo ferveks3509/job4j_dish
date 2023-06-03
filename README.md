@@ -4,7 +4,7 @@
 Общение происходит через брокера сообщений. Принятие ордера на заказ. Уведомление о статусе блюда.
 ## Микросервисы
 + [kitchen](https://github.com/ferveks3509/job4j_kitchen) - Кухня
-+ [order](https://github.com/ferveks3509/job4j_order) - Управление блюдом
++ [order](https://github.com/ferveks3509/job4j_order) - Управление ордерами
 + [notification](https://github.com/ferveks3509/job4j_notification) - Уведомления
 
 ### API dish
