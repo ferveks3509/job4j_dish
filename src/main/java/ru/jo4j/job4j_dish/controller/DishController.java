@@ -1,20 +1,25 @@
 package ru.jo4j.job4j_dish.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import jakarta.transaction.Transactional;
 import org.springframework.web.bind.annotation.*;
+import ru.jo4j.job4j_dish.controller.helpers.ControllerHelpers;
+import ru.jo4j.job4j_dish.exception.BadRequestException;
 import ru.jo4j.job4j_dish.model.Dish;
 import ru.jo4j.job4j_dish.service.DishService;
 
 import java.util.List;
+import java.util.Optional;
 
+@Transactional
 @RestController
 @RequestMapping("/dish")
 public class DishController {
     private final DishService dishService;
+    private final ControllerHelpers controllerHelpers;
 
-    public DishController(DishService dishService) {
+    public DishController(DishService dishService, ControllerHelpers controllerHelpers) {
         this.dishService = dishService;
+        this.controllerHelpers = controllerHelpers;
     }
 
     @GetMapping("/")
@@ -23,29 +28,26 @@ public class DishController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Dish> create(@RequestBody Dish dish) {
-        return new ResponseEntity<>(
-                dishService.create(dish),
-                HttpStatus.CREATED);
+    public Dish create(@RequestBody Dish dish) {
+        Optional<Dish> existingDishName = dishService.findByName(dish.getName());
+        if (existingDishName.isPresent())
+            throw new BadRequestException(String.format("Dish name: %s is present",dish.getName()));
+        return dishService.create(dish);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Dish> findById(@PathVariable int id) {
-        var dish = dishService.findById(id);
-        return new ResponseEntity<>(
-                dish.orElse(new Dish()),
-                dish.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+    public Dish findById(@PathVariable int id) {
+        return controllerHelpers.getDishOrThrowException(id);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable int id, @RequestBody Dish dish) {
-        var update = dishService.update(dish, id);
-        return new ResponseEntity<>(update ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+    public boolean update(@PathVariable int id, @RequestBody Dish dish) {
+        controllerHelpers.getDishOrThrowException(id);
+        return dishService.update(dish, id);
     }
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
-        var delete = dishService.deleteById(id);
-        return new ResponseEntity<>(delete ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+    public void delete(@PathVariable int id) {
+        controllerHelpers.getDishOrThrowException(id);
+        dishService.deleteById(id);
     }
 }

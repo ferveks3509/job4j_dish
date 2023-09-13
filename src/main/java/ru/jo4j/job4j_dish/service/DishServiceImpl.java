@@ -49,4 +49,9 @@ public class DishServiceImpl implements DishService {
         }
         return result;
     }
+
+    @Override
+    public Optional<Dish> findByName(String name) {
+        return dishRepository.findByName(name);
+    }
 }

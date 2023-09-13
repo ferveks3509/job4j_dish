@@ -11,4 +11,5 @@ public interface DishService {
     Dish create(Dish dish);
     boolean update(Dish dish, int id);
     boolean deleteById(int id);
+    Optional<Dish> findByName(String name);
 }
