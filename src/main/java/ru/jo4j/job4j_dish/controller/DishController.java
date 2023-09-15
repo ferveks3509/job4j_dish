@@ -31,7 +31,7 @@ public class DishController {
     public Dish create(@RequestBody Dish dish) {
         Optional<Dish> existingDishName = dishService.findByName(dish.getName());
         if (existingDishName.isPresent())
-            throw new BadRequestException(String.format("Dish name: %s is present",dish.getName()));
+            throw new BadRequestException(String.format("Dish name: %s is present", dish.getName()));
         return dishService.create(dish);
     }
 
@@ -45,6 +45,7 @@ public class DishController {
         controllerHelpers.getDishOrThrowException(id);
         return dishService.update(dish, id);
     }
+
     @DeleteMapping("/{id}")
     public void delete(@PathVariable int id) {
         controllerHelpers.getDishOrThrowException(id);
