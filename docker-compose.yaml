@@ -15,3 +15,5 @@ services:
     container_name: 'dish_service'
     ports:
       - 8080:8080
+    depends_on:
+      - dish_db
