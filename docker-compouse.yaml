@@ -1,0 +1,17 @@
+version: '3'
+services:
+  postgres:
+    image: 'postgres'
+    container_name: 'dish_db'
+    environment:
+      - 'POSTGRES_USER=postgres'
+      - 'POSTGRES_PASSWORD=password'
+      - 'POSTGRES_DB=dish'
+    volumes:
+      - ./db/dish/data:var/lib/postgresql/data
+    restart: always
+  job4j_dish:
+    build: ./
+    container_name: 'dish_service'
+    ports:
+      - 8080:8080

@@ -16,7 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DishControllerTest {
@@ -86,12 +88,14 @@ class DishControllerTest {
     void whenDeleteDishAndTakeException() {
         Mockito.when(controllerHelpers.getDishOrThrowException(9)).thenThrow(NotFoundException.class);
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> {
-            dishController.delete(9);
-        });
-        String eName = ex.getMessage();
+        assertThrows(NotFoundException.class, () -> dishController.delete(9));
 
-        assertTrue(ex.getMessage().contains(eName));
+        // assertThatExceptionOfType(RuntimeException.class)
+        //        .isThrownBy(() -> dishController.delete(9))
+        //        .withMessageContaining("Dish with id: 9 not found");
+        verify(controllerHelpers, times(1)).getDishOrThrowException(9);
+        verify(dishService, never()).deleteById(anyInt());
+
     }
 
     @Test
